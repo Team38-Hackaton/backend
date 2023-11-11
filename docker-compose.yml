@@ -1,0 +1,17 @@
+services:
+  flask:
+
+    build: ./
+
+    container_name: backend-flask-api
+
+    environment:
+      - PYTHONUNBUFFERED=True
+
+    restart: on-failure
+
+    volumes:
+      - ./:/Team38backend
+
+    ports:
+      - "5000:5000"
