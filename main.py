@@ -66,7 +66,7 @@ def index():
 def login():
     if request.method == "POST":
         user = dbase.get_user_by_email(request.json.get("email", None))
-        if user and user['psw'] == request.json.get("psw", None):
+        if user and check_password_hash(user['psw'], request.json.get("psw", None)):
             return {"status": "вы вошли"}
         else:
             return {"status": "неверный логин или пароль"}
@@ -79,7 +79,8 @@ def register():
         user_psw = request.json.get("psw", None)
         user_psw2 = request.json.get("psw2", None)
         if len(user_login) > 4 and len(user_mail) > 4 and len(user_psw) > 4 and user_psw == user_psw2:
-            if dbase.add_new_user(user_login, user_mail, user_psw):
+            psw_hash = generate_password_hash(user_psw)
+            if dbase.add_new_user(user_login, user_mail, psw_hash):
                 return {"status": "вы зарегались"}
             else:
                 return {"status": "ошибка БД или пользователь уже есть"}
