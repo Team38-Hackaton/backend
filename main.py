@@ -1,4 +1,5 @@
 from flask import Flask, request, g
+from werkzeug.security import generate_password_hash, check_password_hash
 from config import Config
 from flask_jwt_extended import create_access_token, JWTManager
 import sqlite3
@@ -63,15 +64,27 @@ def index():
 
 @app.route('/login', methods=["POST"])
 def login():
-    email = request.json.get("email", None)
-    password = request.json.get("password", None)
-    if email != "test" or password != "test":
-        return {"msg": "Wrong email or password"}, 401
+    if request.method == "POST":
+        user = dbase.get_user_by_email(request.json.get("email", None))
+        if user and user['psw'] == request.json.get("psw", None):
+            return {"status": "вы вошли"}
+        else:
+            return {"status": "неверный логин или пароль"}
 
-    access_token = create_access_token(identity=email)
-    response = {"access_token": access_token}
-    return response
-
+@app.route("/register", methods=["POST"])
+def register():
+    if request.method == "POST":
+        user_login = request.json.get("login", None)
+        user_mail = request.json.get("email", None)
+        user_psw = request.json.get("psw", None)
+        user_psw2 = request.json.get("psw2", None)
+        if len(user_login) > 4 and len(user_mail) > 4 and len(user_psw) > 4 and user_psw == user_psw2:
+            if dbase.add_new_user(user_login, user_mail, user_psw):
+                return {"status": "вы зарегались"}
+            else:
+                return {"status": "ошибка БД или пользователь уже есть"}
+        else:
+            return {"status": "неверно заполнены поля"}
 
 
 if __name__ == '__main__':
