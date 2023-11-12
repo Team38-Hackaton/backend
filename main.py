@@ -1,28 +1,29 @@
-from flask import Flask, request, g, jsonify
-from werkzeug.security import generate_password_hash, check_password_hash
-from config import Config
-from flask_jwt_extended import create_access_token, JWTManager, get_jwt, get_jwt_identity, unset_jwt_cookies, jwt_required, decode_token
-import sqlite3
 import os
 import json
-from DataBaseMethods import DataBase
+import sqlite3
 from datetime import datetime, timedelta, timezone
-from flask_cors import CORS, cross_origin
+
+from flask import Flask, request, g, jsonify
+from flask_cors import CORS
+# from config import Config
+from flask_jwt_extended import create_access_token, JWTManager, get_jwt, get_jwt_identity, unset_jwt_cookies, \
+    jwt_required
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from DataBaseMethods import DataBase
 
 DATABASE = '/tmp/flsite.db'
 SECRET_KEY = 'fefevergerttert3454534t6erge'
-DEBUG = True
+DEBUG = False
 MAX_CONTENT_LENGTH = 1024 * 1024 * 3
 
-
 app = Flask(__name__)
+jwt = JWTManager(app)
+cors = CORS(app)
 app.config["JWT_SECRET_KEY"] = "sample_key"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=8)
 app.config.from_object(__name__)
-app.config.from_object(Config)
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flsite.db')))
-jwt = JWTManager(app)
-cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 
@@ -31,12 +32,14 @@ def connect_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+
 def create_db():
     db = connect_db()
     with app.open_resource('sq_db.sql', mode='r') as f:
         db.cursor().executescript(f.read())
     db.commit()
     db.close()
+
 
 def get_db():
     if not hasattr(g, 'link_db'):
@@ -45,16 +48,20 @@ def get_db():
 
 
 dbase = None
+
+
 @app.before_request
 def before_request():
     global dbase
     db = get_db()
     dbase = DataBase(db)
 
+
 @app.teardown_appcontext
 def close_db(error):
     if hasattr(g, 'link_db'):
         g.link_db.close()
+
 
 @app.after_request
 def refresh_expiring_jwts(response):
@@ -86,6 +93,7 @@ def index():
 
     return response_body
 
+
 @app.route('/login', methods=["POST"])
 def login():
     user_email = request.json.get("email", None)
@@ -100,6 +108,7 @@ def login():
     else:
         response = {"status": "неверный логин или пароль"}, 401
         return response
+
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -117,12 +126,12 @@ def register():
         else:
             return {"status": "неверно заполнены поля"}
 
+
 @app.route("/logout", methods=["POST"])
 def logout():
     response = jsonify({"status": "вы вышли из системы"})
     unset_jwt_cookies(response)
     return response
-
 
 
 @app.route('/profile', methods=["POST"])
@@ -139,6 +148,5 @@ def my_profile():
     return response_body
 
 
-
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=False)
