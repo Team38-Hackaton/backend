@@ -13,7 +13,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from DataBaseMethods import DataBase
 
 DATABASE = '/tmp/flsite.db'
-SECRET_KEY = 'fefevergerttert3454534t6erge'
+SECRET_KEY = 'Sample_Key'
 DEBUG = False
 MAX_CONTENT_LENGTH = 1024 * 1024 * 3
 
