@@ -77,10 +77,10 @@ def login():
     user = dbase.get_user_by_email(user_email)
     if user and check_password_hash(user['psw'], request.json.get("psw", None)):
         access_token = create_access_token(identity=user_email)
-        response = {"access_token": access_token}
+        response = {"access_token": access_token}, 200
         return response
     else:
-        response = {"status": "неверный логин или пароль"}
+        response = {"status": "неверный логин или пароль"}, 401
         return response
 
 @app.route("/register", methods=["POST"])
@@ -93,9 +93,9 @@ def register():
         if len(user_login) > 1 and len(user_mail) > 4 and len(user_psw) > 4:
             psw_hash = generate_password_hash(user_psw)
             if dbase.add_new_user(user_login, user_mail, psw_hash):
-                return {"status": "вы зарегистрировались"}
+                return {"status": "вы зарегистрировались"}, 200
             else:
-                return {"status": "ошибка БД или пользователь уже есть"}
+                return {"status": "ошибка БД или пользователь уже есть"},
         else:
             return {"status": "неверно заполнены поля"}
 
@@ -115,7 +115,7 @@ def my_profile():
 
     response_body = {
         "email": email,
-        "login": user["name"]
+        "name": user["name"]
     }
 
     return response_body
