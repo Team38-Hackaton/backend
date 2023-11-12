@@ -7,6 +7,7 @@ import os
 import json
 from DataBaseMethods import DataBase
 from datetime import datetime, timedelta, timezone
+from flask_cors import CORS, cross_origin
 
 DATABASE = '/tmp/flsite.db'
 SECRET_KEY = 'fefevergerttert3454534t6erge'
@@ -21,6 +22,8 @@ app.config.from_object(__name__)
 app.config.from_object(Config)
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flsite.db')))
 jwt = JWTManager(app)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 def connect_db():
@@ -86,7 +89,7 @@ def login():
 @app.route("/register", methods=["POST"])
 def register():
     if request.method == "POST":
-        user_login = request.json.get("login", None)
+        user_login = request.json.get("name", None)
         user_mail = request.json.get("email", None)
         user_psw = request.json.get("psw", None)
 
