@@ -89,8 +89,8 @@ def register():
         user_login = request.json.get("login", None)
         user_mail = request.json.get("email", None)
         user_psw = request.json.get("psw", None)
-        user_psw2 = request.json.get("psw2", None)
-        if len(user_login) > 4 and len(user_mail) > 4 and len(user_psw) > 4 and user_psw == user_psw2:
+
+        if len(user_login) > 1 and len(user_mail) > 4 and len(user_psw) > 4:
             psw_hash = generate_password_hash(user_psw)
             if dbase.add_new_user(user_login, user_mail, psw_hash):
                 return {"status": "вы зарегистрировались"}
