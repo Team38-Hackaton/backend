@@ -73,6 +73,18 @@ def refresh_expiring_jwts(response):
         return response
 
 
+@app.route('/', methods=["GET"])
+@jwt_required()
+def index():
+    email = get_jwt_identity()
+    user = dbase.get_user_by_email(email)
+
+    response_body = {
+        "email": email,
+        "name": user["name"]
+    }
+
+    return response_body
 
 @app.route('/login', methods=["POST"])
 def login():
