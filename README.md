@@ -48,4 +48,5 @@ python -m main
 ```
 
 ## Ссылка на деплой
-[Click!]([memory-game-nine-gamma.vercel.app](https://flask-andersgrunge.cloud.okteto.net/))
+[Memory card game](https://memory-game-nine-gamma.vercel.app/)
+[Backend](https://flask-andersgrunge.cloud.okteto.net/)
