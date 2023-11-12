@@ -47,6 +47,23 @@ pip install -r requirements.txt
 python -m main
 ```
 
+## Чтобы развернуть бэкенд
+
+Склонируйте репозиторий:
+
+```
+git clone https://github.com/Team38-Hackaton/backend
+```
+Установите зависимости: 
+```
+pip install -r requirements.txt
+```
+Запустите проект: 
+```
+python -m main
+```
+
+
 ## Ссылка на деплой
 Memory card game (https://memory-game-nine-gamma.vercel.app/),
 
