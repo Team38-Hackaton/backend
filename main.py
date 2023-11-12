@@ -80,7 +80,10 @@ def login():
     user = dbase.get_user_by_email(user_email)
     if user and check_password_hash(user['psw'], request.json.get("psw", None)):
         access_token = create_access_token(identity=user_email)
-        response = {"access_token": access_token}, 200
+        response = {"access_token": access_token,
+                    "email": user_email,
+                    "name": user["name"]
+                    }, 200
         return response
     else:
         response = {"status": "неверный логин или пароль"}, 401
